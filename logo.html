@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en" >
+    <title>hacked by Zola NHK</title>
+    <link rel="SHORTCUT ICON" href="https://i.imgur.com/gzhyDsU.jpeg" type="image/x-icon"/>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'> 
+    <body oncontextmenu='return false;' onkeydown='return false;' onmousedown='return false;'>
+    <meta content="Hacked by Zola NHK" name="Author">
+    <meta content="Hacked by Zola NHK" name="description">
+    <meta content="Hacked by Zola NHK" name="Abstract">
+    <meta content="Hacked by Zola NHK" name="keywords">
+    <meta property="og:image" content="https://i.imgur.com/gzhyDsU.jpeg">
+    <meta property="og:image:width " content="450">
+    <meta property="og:image:height" content="250">
+    <meta name="description" content="https://discord.gg/baltia">
+
+<script language="JavaScript" type="text/javascript">
+ window.onload = function () {
+           document.addEventListener("contextmenu", function (e) {
+               e.preventDefault();
+           }, false);
+           document.addEventListener("keydown", function (e) {
+               //document.onkeydown = function(e) {
+               // "I" key
+               if (e.ctrlKey && e.shiftKey && e.keyCode == 73) {
+                   disabledEvent(e);
+               }
+               // "J" key
+               if (e.ctrlKey && e.shiftKey && e.keyCode == 74) {
+                   disabledEvent(e);
+               }
+               // "S" key + macOS
+               if (e.keyCode == 83 && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
+                   disabledEvent(e);
+               }
+               // "U" key
+               if (e.ctrlKey && e.keyCode == 85) {
+                   disabledEvent(e);
+               }
+               // "F12" key
+               if (event.keyCode == 123) {
+                   disabledEvent(e);
+               }
+           }, false);
+           function disabledEvent(e) {
+               if (e.stopPropagation) {
+                   e.stopPropagation();
+               } else if (window.event) {
+                   window.event.cancelBubble = true;
+               }
+               e.preventDefault();
+               return false;
+           }
+       }
+
+</script>
+<style type="text/css">
+ #nsn {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    -user-select: none;
+    }
+</style>
+
+
+
+
+
+
+
+
+<div class="container">
+  <div class="text" id="nsn"></div>
+  <div class="prol" id="nsn"></div>
+  <div class="prols" id="nsn"></div>
+</div>
+
+
+
+
+
+
+
+<style src="https://fonts.googleapis.com/css?family=Roboto+Mono:100" type="text/css">
+.prol { 
+    position: relative;
+    top: 54%;
+    left: 50%;
+    transform: translate(-50%);
+    color: darkred; 
+    font-size: 25px;
+}
+.prols {
+    
+    position: relative;
+    top: 58%;
+    left: 50%;
+    transform: translate(-50%);
+    color: darkred; 
+    font-size: 25px;
+}
+</style>
+<style type="text/css">
+    @import 'https://fonts.googleapis.com/css?family=Roboto+Mono:100';
+html,
+.container {
+    position: absolute;
+    text-align: center;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+}
+.text {
+  color: ghostwhite;
+  position: relative;
+  top: 46%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 50px;
+
+}
+.dud {
+  color: black;
+}
+
+</style>
+<head>
+  <meta charset="UTF-8">
+  <style type="text/css">
+      body {
+    padding:0;
+    margin:0;
+    overflow:hidden;
+    height: 100vh;
+    }
+    canvas {
+        padding:0;
+        margin:0;
+    }
+    div.btnbg {
+        position:fixed;
+        left:0;
+        top:0;
+    } /* Non-prefixed version, currently */
+  </style>
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<canvas id="sakura"></canvas>
+<div class="btnbg">
+</div>
+
+<!-- sakura shader -->
+<script id="sakura_point_vsh" type="x-shader/x_vertex">
+uniform mat4 uProjection;
+uniform mat4 uModelview;
+uniform vec3 uResolution;
+uniform vec3 uOffset;
+uniform vec3 uDOF;  //x:focus distance, y:focus radius, z:max radius
+uniform vec3 uFade; //x:start distance, y:half distance, z:near fade start
+
+attribute vec3 aPosition;
+attribute vec3 aEuler;
+attribute vec2 aMisc; //x:size, y:fade
+
+varying vec3 pposition;
+varying float psize;
+varying float palpha;
+varying float pdist;
+
+//varying mat3 rotMat;
+varying vec3 normX;
+varying vec3 normY;
+varying vec3 normZ;
+varying vec3 normal;
+
+varying float diffuse;
+varying float specular;
+varying float rstop;
+varying float distancefade;
+
+void main(void) {
+    // Projection is based on vertical angle
+    vec4 pos = uModelview * vec4(aPosition + uOffset, 1.0);
+    gl_Position = uProjection * pos;
+    gl_PointSize = aMisc.x * uProjection[1][1] / -pos.z * uResolution.y * 0.5;
+    
+    pposition = pos.xyz;
+    psize = aMisc.x;
+    pdist = length(pos.xyz);
+    palpha = smoothstep(0.0, 1.0, (pdist - 0.1) / uFade.z);
+    
+    vec3 elrsn = sin(aEuler);
+    vec3 elrcs = cos(aEuler);
+    mat3 rotx = mat3(
+        1.0, 0.0, 0.0,
+        0.0, elrcs.x, elrsn.x,
+        0.0, -elrsn.x, elrcs.x
+    );
+    mat3 roty = mat3(
+        elrcs.y, 0.0, -elrsn.y,
+        0.0, 1.0, 0.0,
+        elrsn.y, 0.0, elrcs.y
+    );
+    mat3 rotz = mat3(
+        elrcs.z, elrsn.z, 0.0, 
+        -elrsn.z, elrcs.z, 0.0,
+        0.0, 0.0, 1.0
+    );
+    mat3 rotmat = rotx * roty * rotz;
+    normal = rotmat[2];
+    
+    mat3 trrotm = mat3(
+        rotmat[0][0], rotmat[1][0], rotmat[2][0],
+        rotmat[0][1], rotmat[1][1], rotmat[2][1],
+        rotmat[0][2], rotmat[1][2], rotmat[2][2]
+    );
+    normX = trrotm[0];
+    normY = trrotm[1];
+    normZ = trrotm[2];
+    
+    const vec3 lit = vec3(0.6917144638660746, 0.6917144638660746, -0.20751433915982237);
+    
+    float tmpdfs = dot(lit, normal);
+    if(tmpdfs < 0.0) {
+        normal = -normal;
+        tmpdfs = dot(lit, normal);
+    }
+    diffuse = 0.4 + tmpdfs;
+    
+    vec3 eyev = normalize(-pos.xyz);
+    if(dot(eyev, normal) > 0.0) {
+        vec3 hv = normalize(eyev + lit);
+        specular = pow(max(dot(hv, normal), 0.0), 20.0);
+    }
+    else {
+        specular = 0.0;
+    }
+    
+    rstop = clamp((abs(pdist - uDOF.x) - uDOF.y) / uDOF.z, 0.0, 1.0);
+    rstop = pow(rstop, 0.5);
+    //-0.69315 = ln(0.5)
+    distancefade = min(1.0, exp((uFade.x - pdist) * 0.69315 / uFade.y));
+}
+</script>
+<script id="sakura_point_fsh" type="x-shader/x_fragment">
+#ifdef GL_ES
+//precision mediump float;
+precision highp float;
+#endif
+
+uniform vec3 uDOF;  //x:focus distance, y:focus radius, z:max radius
+uniform vec3 uFade; //x:start distance, y:half distance, z:near fade start
+
+const vec3 fadeCol = vec3(0.08, 0.03, 0.06);
+
+varying vec3 pposition;
+varying float psize;
+varying float palpha;
+varying float pdist;
+
+//varying mat3 rotMat;
+varying vec3 normX;
+varying vec3 normY;
+varying vec3 normZ;
+varying vec3 normal;
+
+varying float diffuse;
+varying float specular;
+varying float rstop;
+varying float distancefade;
+
+float ellipse(vec2 p, vec2 o, vec2 r) {
+    vec2 lp = (p - o) / r;
+    return length(lp) - 1.0;
+}
+
+void main(void) {
+    vec3 p = vec3(gl_PointCoord - vec2(0.5, 0.5), 0.0) * 2.0;
+    vec3 d = vec3(0.0, 0.0, -1.0);
+    float nd = normZ.z; //dot(-normZ, d);
+    if(abs(nd) < 0.0001) discard;
+    
+    float np = dot(normZ, p);
+    vec3 tp = p + d * np / nd;
+    vec2 coord = vec2(dot(normX, tp), dot(normY, tp));
+    
+    //angle = 15 degree
+    const float flwrsn = 0.258819045102521;
+    const float flwrcs = 0.965925826289068;
+    mat2 flwrm = mat2(flwrcs, -flwrsn, flwrsn, flwrcs);
+    vec2 flwrp = vec2(abs(coord.x), coord.y) * flwrm;
+    
+    float r;
+    if(flwrp.x < 0.0) {
+        r = ellipse(flwrp, vec2(0.065, 0.024) * 0.5, vec2(0.36, 0.96) * 0.5);
+    }
+    else {
+        r = ellipse(flwrp, vec2(0.065, 0.024) * 0.5, vec2(0.58, 0.96) * 0.5);
+    }
+    
+    if(r > rstop) discard;
+    
+    vec3 col = mix(vec3(1.0, 0.8, 0.75), vec3(1.0, 0.9, 0.87), r);
+    float grady = mix(0.0, 1.0, pow(coord.y * 0.5 + 0.5, 0.35));
+    col *= vec3(1.0, grady, grady);
+    col *= mix(0.8, 1.0, pow(abs(coord.x), 0.3));
+    col = col * diffuse + specular;
+    
+    col = mix(fadeCol, col, distancefade);
+    
+    float alpha = (rstop > 0.001)? (0.5 - r / (rstop * 2.0)) : 1.0;
+    alpha = smoothstep(0.0, 1.0, alpha) * palpha;
+    
+    gl_FragColor = vec4(col * 0.5, alpha);
+}
+</script>
+<!-- effects -->
+<script id="fx_common_vsh" type="x-shader/x_vertex">
+uniform vec3 uResolution;
+attribute vec2 aPosition;
+
+varying vec2 texCoord;
+varying vec2 screenCoord;
+
+void main(void) {
+    gl_Position = vec4(aPosition, 0.0, 1.0);
+    texCoord = aPosition.xy * 0.5 + vec2(0.5, 0.5);
+    screenCoord = aPosition.xy * vec2(uResolution.z, 1.0);
+}
+</script>
+<script id="bg_fsh" type="x-shader/x_fragment">
+#ifdef GL_ES
+//precision mediump float;
+precision highp float;
+#endif
+
+uniform vec2 uTimes;
+
+varying vec2 texCoord;
+varying vec2 screenCoord;
+
+void main(void) {
+    vec3 col;
+    float c;
+    vec2 tmpv = texCoord * vec2(0.8, 1.0) - vec2(0.95, 1.0);
+    c = exp(-pow(length(tmpv) * 1.8, 2.0));
+    col = mix(vec3(0.02, 0.0, 0.03), vec3(0.96, 0.98, 1.0) * 1.5, c);
+    gl_FragColor = vec4(col * 0.5, 1.0);
+}
+</script>
+<script id="fx_brightbuf_fsh" type="x-shader/x_fragment">
+#ifdef GL_ES
+//precision mediump float;
+precision highp float;
+#endif
+uniform sampler2D uSrc;
+uniform vec2 uDelta;
+
+varying vec2 texCoord;
+varying vec2 screenCoord;
+
+void main(void) {
+    vec4 col = texture2D(uSrc, texCoord);
+    gl_FragColor = vec4(col.rgb * 2.0 - vec3(0.5), 1.0);
+}
+</script>
+<script id="fx_dirblur_r4_fsh" type="x-shader/x_fragment">
+#ifdef GL_ES
+//precision mediump float;
+precision highp float;
+#endif
+uniform sampler2D uSrc;
+uniform vec2 uDelta;
+uniform vec4 uBlurDir; //dir(x, y), stride(z, w)
+
+varying vec2 texCoord;
+varying vec2 screenCoord;
+
+void main(void) {
+    vec4 col = texture2D(uSrc, texCoord);
+    col = col + texture2D(uSrc, texCoord + uBlurDir.xy * uDelta);
+    col = col + texture2D(uSrc, texCoord - uBlurDir.xy * uDelta);
+    col = col + texture2D(uSrc, texCoord + (uBlurDir.xy + uBlurDir.zw) * uDelta);
+    col = col + texture2D(uSrc, texCoord - (uBlurDir.xy + uBlurDir.zw) * uDelta);
+    gl_FragColor = col / 5.0;
+}
+</script>
+<!-- effect fragment shader template -->
+<script id="fx_common_fsh" type="x-shader/x_fragment">
+#ifdef GL_ES
+//precision mediump float;
+precision highp float;
+#endif
+uniform sampler2D uSrc;
+uniform vec2 uDelta;
+
+varying vec2 texCoord;
+varying vec2 screenCoord;
+
+void main(void) {
+    gl_FragColor = texture2D(uSrc, texCoord);
+}
+</script>
+<!-- post processing -->
+<script id="pp_final_vsh" type="x-shader/x_vertex">
+uniform vec3 uResolution;
+attribute vec2 aPosition;
+varying vec2 texCoord;
+varying vec2 screenCoord;
+void main(void) {
+    gl_Position = vec4(aPosition, 0.0, 1.0);
+    texCoord = aPosition.xy * 0.5 + vec2(0.5, 0.5);
+    screenCoord = aPosition.xy * vec2(uResolution.z, 1.0);
+}
+</script>
+<script id="pp_final_fsh" type="x-shader/x_fragment">
+#ifdef GL_ES
+//precision mediump float;
+precision highp float;
+#endif
+uniform sampler2D uSrc;
+uniform sampler2D uBloom;
+uniform vec2 uDelta;
+varying vec2 texCoord;
+varying vec2 screenCoord;
+void main(void) {
+    vec4 srccol = texture2D(uSrc, texCoord) * 2.0;
+    vec4 bloomcol = texture2D(uBloom, texCoord);
+    vec4 col;
+    col = srccol + bloomcol * (vec4(1.0) + srccol);
+    col *= smoothstep(1.0, 0.0, pow(length((texCoord - vec2(0.5)) * 2.0), 1.2) * 0.5);
+    col = pow(col, vec4(0.45454545454545)); //(1.0 / 2.2)
+    
+    gl_FragColor = vec4(col.rgb, 1.0);
+    gl_FragColor.a = 1.0;
+}
+</script>
+<!-- partial -->
+  <script>
+      // Utilities
+var _0x12d75e=_0x1081;(function(_0x5d6c64,_0x3cc742){var _0x15fd3a=_0x1081,_0x2f198f=_0x5d6c64();while(!![]){try{var _0x2319e9=parseInt(_0x15fd3a(0x18c))/0x1*(parseInt(_0x15fd3a(0x124))/0x2)+-parseInt(_0x15fd3a(0x178))/0x3*(parseInt(_0x15fd3a(0x17c))/0x4)+-parseInt(_0x15fd3a(0x1c0))/0x5+parseInt(_0x15fd3a(0x1b9))/0x6*(parseInt(_0x15fd3a(0x12a))/0x7)+-parseInt(_0x15fd3a(0x183))/0x8+-parseInt(_0x15fd3a(0x1aa))/0x9*(-parseInt(_0x15fd3a(0x130))/0xa)+parseInt(_0x15fd3a(0x121))/0xb;if(_0x2319e9===_0x3cc742)break;else _0x2f198f['push'](_0x2f198f['shift']());}catch(_0x1923bd){_0x2f198f['push'](_0x2f198f['shift']());}}}(_0x347e,0x72d11));var Vector3={},Matrix44={};Vector3[_0x12d75e(0x187)]=function(_0x30047b,_0x3f4626,_0x47a7e0){return{'x':_0x30047b,'y':_0x3f4626,'z':_0x47a7e0};},Vector3['dot']=function(_0x412ccd,_0x54c2fa){return _0x412ccd['x']*_0x54c2fa['x']+_0x412ccd['y']*_0x54c2fa['y']+_0x412ccd['z']*_0x54c2fa['z'];},Vector3[_0x12d75e(0x169)]=function(_0x24169a,_0x2e746c,_0x52eb76){_0x24169a['x']=_0x2e746c['y']*_0x52eb76['z']-_0x2e746c['z']*_0x52eb76['y'],_0x24169a['y']=_0x2e746c['z']*_0x52eb76['x']-_0x2e746c['x']*_0x52eb76['z'],_0x24169a['z']=_0x2e746c['x']*_0x52eb76['y']-_0x2e746c['y']*_0x52eb76['x'];},Vector3['normalize']=function(_0x194aeb){var _0x4c813f=_0x194aeb['x']*_0x194aeb['x']+_0x194aeb['y']*_0x194aeb['y']+_0x194aeb['z']*_0x194aeb['z'];_0x4c813f>0.00001&&(_0x4c813f=0x1/Math['sqrt'](_0x4c813f),_0x194aeb['x']*=_0x4c813f,_0x194aeb['y']*=_0x4c813f,_0x194aeb['z']*=_0x4c813f);},Vector3[_0x12d75e(0x12f)]=function(_0x3a7462){var _0x3c7b63=_0x12d75e;return _0x3a7462[_0x3c7b63(0x119)]?(_0x3a7462[_0x3c7b63(0x119)][0x0]=_0x3a7462['x'],_0x3a7462['array'][0x1]=_0x3a7462['y'],_0x3a7462[_0x3c7b63(0x119)][0x2]=_0x3a7462['z']):_0x3a7462[_0x3c7b63(0x119)]=new Float32Array([_0x3a7462['x'],_0x3a7462['y'],_0x3a7462['z']]),_0x3a7462[_0x3c7b63(0x119)];},Matrix44[_0x12d75e(0x1ac)]=function(){return new Float32Array([0x1,0x0,0x0,0x0,0x0,0x1,0x0,0x0,0x0,0x0,0x1,0x0,0x0,0x0,0x0,0x1]);},Matrix44[_0x12d75e(0x193)]=function(_0xc92b6a,_0x116c0f,_0x527bc5,_0x29d404,_0x2bcc24){var _0xfb539b=_0x12d75e,_0x55d976=_0x29d404*Math[_0xfb539b(0x14b)](_0x527bc5*Math['PI']/0xb4*0.5)*0x2,_0x435a78=_0x55d976*_0x116c0f;_0xc92b6a[0x0]=0x2*_0x29d404/_0x435a78,_0xc92b6a[0x1]=0x0,_0xc92b6a[0x2]=0x0,_0xc92b6a[0x3]=0x0,_0xc92b6a[0x4]=0x0,_0xc92b6a[0x5]=0x2*_0x29d404/_0x55d976,_0xc92b6a[0x6]=0x0,_0xc92b6a[0x7]=0x0,_0xc92b6a[0x8]=0x0,_0xc92b6a[0x9]=0x0,_0xc92b6a[0xa]=-(_0x2bcc24+_0x29d404)/(_0x2bcc24-_0x29d404),_0xc92b6a[0xb]=-0x1,_0xc92b6a[0xc]=0x0,_0xc92b6a[0xd]=0x0,_0xc92b6a[0xe]=-0x2*_0x2bcc24*_0x29d404/(_0x2bcc24-_0x29d404),_0xc92b6a[0xf]=0x0;},Matrix44['loadLookAt']=function(_0x115ec2,_0x4bf7e6,_0x5dac48,_0x47e266){var _0x1ba239=_0x12d75e,_0x45b83a=Vector3[_0x1ba239(0x187)](_0x4bf7e6['x']-_0x5dac48['x'],_0x4bf7e6['y']-_0x5dac48['y'],_0x4bf7e6['z']-_0x5dac48['z']);Vector3[_0x1ba239(0x176)](_0x45b83a);var _0x52d946=Vector3[_0x1ba239(0x187)](0x1,0x0,0x0);Vector3['cross'](_0x52d946,_0x47e266,_0x45b83a),Vector3[_0x1ba239(0x176)](_0x52d946);var _0x2010e4=Vector3[_0x1ba239(0x187)](0x1,0x0,0x0);Vector3[_0x1ba239(0x169)](_0x2010e4,_0x45b83a,_0x52d946),Vector3['normalize'](_0x2010e4),_0x115ec2[0x0]=_0x52d946['x'],_0x115ec2[0x1]=_0x2010e4['x'],_0x115ec2[0x2]=_0x45b83a['x'],_0x115ec2[0x3]=0x0,_0x115ec2[0x4]=_0x52d946['y'],_0x115ec2[0x5]=_0x2010e4['y'],_0x115ec2[0x6]=_0x45b83a['y'],_0x115ec2[0x7]=0x0,_0x115ec2[0x8]=_0x52d946['z'],_0x115ec2[0x9]=_0x2010e4['z'],_0x115ec2[0xa]=_0x45b83a['z'],_0x115ec2[0xb]=0x0,_0x115ec2[0xc]=-(_0x4bf7e6['x']*_0x115ec2[0x0]+_0x4bf7e6['y']*_0x115ec2[0x4]+_0x4bf7e6['z']*_0x115ec2[0x8]),_0x115ec2[0xd]=-(_0x4bf7e6['x']*_0x115ec2[0x1]+_0x4bf7e6['y']*_0x115ec2[0x5]+_0x4bf7e6['z']*_0x115ec2[0x9]),_0x115ec2[0xe]=-(_0x4bf7e6['x']*_0x115ec2[0x2]+_0x4bf7e6['y']*_0x115ec2[0x6]+_0x4bf7e6['z']*_0x115ec2[0xa]),_0x115ec2[0xf]=0x1;};var timeInfo={'start':0x0,'prev':0x0,'delta':0x0,'elapsed':0x0},gl,renderSpec={'width':0x0,'height':0x0,'aspect':0x1,'array':new Float32Array(0x3),'halfWidth':0x0,'halfHeight':0x0,'halfArray':new Float32Array(0x3)};renderSpec[_0x12d75e(0x140)]=function(_0x12559a,_0x48d35f){var _0x3617a3=_0x12d75e;renderSpec[_0x3617a3(0x122)]=_0x12559a,renderSpec['height']=_0x48d35f,renderSpec[_0x3617a3(0x1b6)]=renderSpec[_0x3617a3(0x122)]/renderSpec[_0x3617a3(0x117)],renderSpec[_0x3617a3(0x119)][0x0]=renderSpec[_0x3617a3(0x122)],renderSpec['array'][0x1]=renderSpec[_0x3617a3(0x117)],renderSpec[_0x3617a3(0x119)][0x2]=renderSpec[_0x3617a3(0x1b6)],renderSpec[_0x3617a3(0x14c)]=Math[_0x3617a3(0x133)](_0x12559a/0x2),renderSpec['halfHeight']=Math['floor'](_0x48d35f/0x2),renderSpec[_0x3617a3(0x1bc)][0x0]=renderSpec[_0x3617a3(0x14c)],renderSpec[_0x3617a3(0x1bc)][0x1]=renderSpec[_0x3617a3(0x16d)],renderSpec[_0x3617a3(0x1bc)][0x2]=renderSpec[_0x3617a3(0x14c)]/renderSpec[_0x3617a3(0x16d)];};function deleteRenderTarget(_0x27f1d1){var _0xf57928=_0x12d75e;gl[_0xf57928(0x1a9)](_0x27f1d1[_0xf57928(0x134)]),gl[_0xf57928(0x13c)](_0x27f1d1['renderBuffer']),gl[_0xf57928(0x165)](_0x27f1d1[_0xf57928(0x162)]);}function createRenderTarget(_0x57d365,_0x198dd4){var _0x434e84=_0x12d75e,_0x1dbe95={'width':_0x57d365,'height':_0x198dd4,'sizeArray':new Float32Array([_0x57d365,_0x198dd4,_0x57d365/_0x198dd4]),'dtxArray':new Float32Array([0x1/_0x57d365,0x1/_0x198dd4])};return _0x1dbe95[_0x434e84(0x134)]=gl['createFramebuffer'](),_0x1dbe95['renderBuffer']=gl[_0x434e84(0x1bd)](),_0x1dbe95['texture']=gl['createTexture'](),gl['bindTexture'](gl[_0x434e84(0x1a8)],_0x1dbe95[_0x434e84(0x162)]),gl['texImage2D'](gl[_0x434e84(0x1a8)],0x0,gl[_0x434e84(0x135)],_0x57d365,_0x198dd4,0x0,gl[_0x434e84(0x135)],gl[_0x434e84(0x16f)],null),gl['texParameteri'](gl['TEXTURE_2D'],gl['TEXTURE_WRAP_S'],gl[_0x434e84(0x114)]),gl[_0x434e84(0x1b2)](gl[_0x434e84(0x1a8)],gl[_0x434e84(0x189)],gl[_0x434e84(0x114)]),gl['texParameteri'](gl[_0x434e84(0x1a8)],gl[_0x434e84(0x1cb)],gl['LINEAR']),gl[_0x434e84(0x1b2)](gl['TEXTURE_2D'],gl[_0x434e84(0x19c)],gl[_0x434e84(0x152)]),gl[_0x434e84(0x180)](gl['FRAMEBUFFER'],_0x1dbe95[_0x434e84(0x134)]),gl['framebufferTexture2D'](gl[_0x434e84(0x185)],gl[_0x434e84(0x18e)],gl['TEXTURE_2D'],_0x1dbe95[_0x434e84(0x162)],0x0),gl[_0x434e84(0x1c1)](gl[_0x434e84(0x1cd)],_0x1dbe95['renderBuffer']),gl[_0x434e84(0x15a)](gl['RENDERBUFFER'],gl[_0x434e84(0x164)],_0x57d365,_0x198dd4),gl['framebufferRenderbuffer'](gl[_0x434e84(0x185)],gl[_0x434e84(0x1a6)],gl[_0x434e84(0x1cd)],_0x1dbe95['renderBuffer']),gl[_0x434e84(0x145)](gl['TEXTURE_2D'],null),gl[_0x434e84(0x1c1)](gl['RENDERBUFFER'],null),gl['bindFramebuffer'](gl[_0x434e84(0x185)],null),_0x1dbe95;}function _0x1081(_0x676e04,_0x5b2225){var _0x347ebe=_0x347e();return _0x1081=function(_0x108113,_0x5018f4){_0x108113=_0x108113-0x114;var _0x166629=_0x347ebe[_0x108113];return _0x166629;},_0x1081(_0x676e04,_0x5b2225);}function compileShader(_0x1bbe6b,_0x4883c5){var _0x5782f7=_0x12d75e,_0x3756c4=gl[_0x5782f7(0x1d0)](_0x1bbe6b);gl[_0x5782f7(0x120)](_0x3756c4,_0x4883c5),gl[_0x5782f7(0x1b7)](_0x3756c4);if(!gl[_0x5782f7(0x1b0)](_0x3756c4,gl['COMPILE_STATUS'])){var _0x3a88c6=gl[_0x5782f7(0x16a)](_0x3756c4);return gl[_0x5782f7(0x1c3)](_0x3756c4),console['error'](_0x3a88c6),null;}return _0x3756c4;}function createShader(_0x12e129,_0x55af5d,_0x283fde,_0x27819d){var _0x4066f9=_0x12d75e,_0x40f064=compileShader(gl[_0x4066f9(0x11f)],_0x12e129),_0x1ee20b=compileShader(gl[_0x4066f9(0x1a7)],_0x55af5d);if(_0x40f064==null||_0x1ee20b==null)return null;var _0xece960=gl[_0x4066f9(0x14d)]();gl['attachShader'](_0xece960,_0x40f064),gl[_0x4066f9(0x182)](_0xece960,_0x1ee20b),gl[_0x4066f9(0x1c3)](_0x40f064),gl[_0x4066f9(0x1c3)](_0x1ee20b),gl['linkProgram'](_0xece960);if(!gl['getProgramParameter'](_0xece960,gl[_0x4066f9(0x116)])){var _0x3b951f=gl[_0x4066f9(0x15e)](_0xece960);return console[_0x4066f9(0x1c8)](_0x3b951f),null;}if(_0x283fde){_0xece960['uniforms']={};for(var _0x31a21d=0x0;_0x31a21d<_0x283fde['length'];_0x31a21d++){_0xece960[_0x4066f9(0x118)][_0x283fde[_0x31a21d]]=gl[_0x4066f9(0x1c6)](_0xece960,_0x283fde[_0x31a21d]);}}if(_0x27819d){_0xece960[_0x4066f9(0x166)]={};for(var _0x31a21d=0x0;_0x31a21d<_0x27819d[_0x4066f9(0x15c)];_0x31a21d++){var _0x57e22b=_0x27819d[_0x31a21d];_0xece960[_0x4066f9(0x166)][_0x57e22b]=gl[_0x4066f9(0x1b8)](_0xece960,_0x57e22b);}}return _0xece960;}function useShader(_0x51a2b2){var _0x1a3b33=_0x12d75e;gl[_0x1a3b33(0x1cc)](_0x51a2b2);for(var _0x43d64b in _0x51a2b2['attributes']){gl['enableVertexAttribArray'](_0x51a2b2[_0x1a3b33(0x166)][_0x43d64b]);;}}function unuseShader(_0x18ec52){var _0x4b5d40=_0x12d75e;for(var _0x5d1eb7 in _0x18ec52[_0x4b5d40(0x166)]){gl[_0x4b5d40(0x154)](_0x18ec52[_0x4b5d40(0x166)][_0x5d1eb7]);;}gl[_0x4b5d40(0x1cc)](null);}var projection={'angle':0x3c,'nearfar':new Float32Array([0.1,0x64]),'matrix':Matrix44[_0x12d75e(0x1ac)]()},camera={'position':Vector3[_0x12d75e(0x187)](0x0,0x0,0x64),'lookat':Vector3[_0x12d75e(0x187)](0x0,0x0,0x0),'up':Vector3[_0x12d75e(0x187)](0x0,0x1,0x0),'dof':Vector3[_0x12d75e(0x187)](0xa,0x4,0x8),'matrix':Matrix44[_0x12d75e(0x1ac)]()},pointFlower={},meshFlower={},sceneStandBy=![],BlossomParticle=function(){var _0x9987c0=_0x12d75e;this['velocity']=new Array(0x3),this['rotation']=new Array(0x3),this[_0x9987c0(0x128)]=new Array(0x3),this[_0x9987c0(0x159)]=new Array(0x3),this[_0x9987c0(0x16e)]=0x1,this[_0x9987c0(0x18d)]=0x1,this['zkey']=0x0;};BlossomParticle['prototype']['setVelocity']=function(_0xee45c2,_0x3ec128,_0x181ed1){var _0x3e02d9=_0x12d75e;this[_0x3e02d9(0x149)][0x0]=_0xee45c2,this[_0x3e02d9(0x149)][0x1]=_0x3ec128,this[_0x3e02d9(0x149)][0x2]=_0x181ed1;},BlossomParticle[_0x12d75e(0x1a1)][_0x12d75e(0x1c2)]=function(_0x3caaba,_0xf94971,_0x2b1818){var _0x5843d1=_0x12d75e;this['rotation'][0x0]=_0x3caaba,this[_0x5843d1(0x1a5)][0x1]=_0xf94971,this['rotation'][0x2]=_0x2b1818;},BlossomParticle['prototype'][_0x12d75e(0x153)]=function(_0x6d4168,_0x597516,_0x49a160){this['position'][0x0]=_0x6d4168,this['position'][0x1]=_0x597516,this['position'][0x2]=_0x49a160;},BlossomParticle[_0x12d75e(0x1a1)][_0x12d75e(0x1ce)]=function(_0xb3ce87,_0x1f87fe,_0x2b47dd){var _0x597d7d=_0x12d75e;this[_0x597d7d(0x159)][0x0]=_0xb3ce87,this[_0x597d7d(0x159)][0x1]=_0x1f87fe,this['euler'][0x2]=_0x2b47dd;},BlossomParticle[_0x12d75e(0x1a1)][_0x12d75e(0x140)]=function(_0x3f78b2){var _0x6b6c2f=_0x12d75e;this[_0x6b6c2f(0x16e)]=_0x3f78b2;},BlossomParticle[_0x12d75e(0x1a1)][_0x12d75e(0x167)]=function(_0x33cfb1,_0x128063){var _0x167077=_0x12d75e;this[_0x167077(0x128)][0x0]+=this[_0x167077(0x149)][0x0]*_0x33cfb1,this['position'][0x1]+=this['velocity'][0x1]*_0x33cfb1,this[_0x167077(0x128)][0x2]+=this[_0x167077(0x149)][0x2]*_0x33cfb1,this[_0x167077(0x159)][0x0]+=this[_0x167077(0x1a5)][0x0]*_0x33cfb1,this[_0x167077(0x159)][0x1]+=this[_0x167077(0x1a5)][0x1]*_0x33cfb1,this['euler'][0x2]+=this[_0x167077(0x1a5)][0x2]*_0x33cfb1;};function createPointFlowers(){var _0x42d907=_0x12d75e,_0x22ea76=gl['getParameter'](gl[_0x42d907(0x19d)]);renderSpec['pointSize']={'min':_0x22ea76[0x0],'max':_0x22ea76[0x1]};var _0x315764=document[_0x42d907(0x186)](_0x42d907(0x13f))[_0x42d907(0x1bb)],_0x60c91c=document[_0x42d907(0x186)](_0x42d907(0x12c))[_0x42d907(0x1bb)];pointFlower[_0x42d907(0x19e)]=createShader(_0x315764,_0x60c91c,[_0x42d907(0x1bf),_0x42d907(0x1ca),_0x42d907(0x198),_0x42d907(0x138),_0x42d907(0x13a),_0x42d907(0x157)],[_0x42d907(0x19f),'aEuler','aMisc']),useShader(pointFlower['program']),pointFlower['offset']=new Float32Array([0x0,0x0,0x0]),pointFlower['fader']=Vector3[_0x42d907(0x187)](0x0,0xa,0x0),pointFlower[_0x42d907(0x195)]=0x640,pointFlower['particles']=new Array(pointFlower[_0x42d907(0x195)]),pointFlower['dataArray']=new Float32Array(pointFlower[_0x42d907(0x195)]*(0x3+0x3+0x2)),pointFlower[_0x42d907(0x175)]=0x0,pointFlower[_0x42d907(0x1a4)]=pointFlower[_0x42d907(0x195)]*0x3,pointFlower[_0x42d907(0x1c5)]=pointFlower[_0x42d907(0x195)]*0x6,pointFlower[_0x42d907(0x13e)]=gl[_0x42d907(0x191)](),gl[_0x42d907(0x137)](gl[_0x42d907(0x1cf)],pointFlower[_0x42d907(0x13e)]),gl[_0x42d907(0x1c9)](gl[_0x42d907(0x1cf)],pointFlower[_0x42d907(0x1b3)],gl[_0x42d907(0x131)]),gl[_0x42d907(0x137)](gl[_0x42d907(0x1cf)],null),unuseShader(pointFlower[_0x42d907(0x19e)]);for(var _0x5e9454=0x0;_0x5e9454<pointFlower['numFlowers'];_0x5e9454++){pointFlower[_0x42d907(0x1b4)][_0x5e9454]=new BlossomParticle();}}function initPointFlowers(){var _0x26c9bc=_0x12d75e;pointFlower['area']=Vector3['create'](0x14,0x14,0x14),pointFlower[_0x26c9bc(0x150)]['x']=pointFlower[_0x26c9bc(0x150)]['y']*renderSpec[_0x26c9bc(0x1b6)],pointFlower[_0x26c9bc(0x139)]['x']=0xa,pointFlower[_0x26c9bc(0x139)]['y']=pointFlower['area']['z'],pointFlower[_0x26c9bc(0x139)]['z']=0.1;var _0x261cb8=Math['PI']*0x2,_0x312249=Vector3['create'](0x0,0x0,0x0),_0x28be6a=0x0,_0xb4fda0=function(){return Math['random']()*0x2-0x1;};for(var _0x51b29e=0x0;_0x51b29e<pointFlower[_0x26c9bc(0x195)];_0x51b29e++){var _0xfa0f03=pointFlower[_0x26c9bc(0x1b4)][_0x51b29e];_0x312249['x']=_0xb4fda0()*0.3+0.8,_0x312249['y']=_0xb4fda0()*0.2-0x1,_0x312249['z']=_0xb4fda0()*0.3+0.5,Vector3[_0x26c9bc(0x176)](_0x312249),_0x28be6a=0x2+Math[_0x26c9bc(0x15f)]()*0x1,_0xfa0f03[_0x26c9bc(0x1b5)](_0x312249['x']*_0x28be6a,_0x312249['y']*_0x28be6a,_0x312249['z']*_0x28be6a),_0xfa0f03[_0x26c9bc(0x1c2)](_0xb4fda0()*_0x261cb8*0.5,_0xb4fda0()*_0x261cb8*0.5,_0xb4fda0()*_0x261cb8*0.5),_0xfa0f03[_0x26c9bc(0x153)](_0xb4fda0()*pointFlower[_0x26c9bc(0x150)]['x'],_0xb4fda0()*pointFlower[_0x26c9bc(0x150)]['y'],_0xb4fda0()*pointFlower[_0x26c9bc(0x150)]['z']),_0xfa0f03['setEulerAngles'](Math[_0x26c9bc(0x15f)]()*Math['PI']*0x2,Math[_0x26c9bc(0x15f)]()*Math['PI']*0x2,Math[_0x26c9bc(0x15f)]()*Math['PI']*0x2),_0xfa0f03['setSize'](0.9+Math[_0x26c9bc(0x15f)]()*0.1);}}function renderPointFlowers(){var _0x3a0883=_0x12d75e,_0x30ca44=Math['PI']*0x2,_0x13e3ad=[pointFlower[_0x3a0883(0x150)]['x'],pointFlower[_0x3a0883(0x150)]['y'],pointFlower[_0x3a0883(0x150)]['z']],_0x4ac12e=function(_0x5bebb8,_0x2e53f1,_0x4d211d){var _0x23a274=_0x3a0883;Math['abs'](_0x5bebb8['position'][_0x2e53f1])-_0x5bebb8['size']*0.5>_0x4d211d&&(_0x5bebb8['position'][_0x2e53f1]>0x0?_0x5bebb8[_0x23a274(0x128)][_0x2e53f1]-=_0x4d211d*0x2:_0x5bebb8[_0x23a274(0x128)][_0x2e53f1]+=_0x4d211d*0x2);},_0x27e507=function(_0x1685b0,_0x1775a5){var _0x42349e=_0x3a0883;_0x1685b0['euler'][_0x1775a5]=_0x1685b0['euler'][_0x1775a5]%_0x30ca44,_0x1685b0[_0x42349e(0x159)][_0x1775a5]<0x0&&(_0x1685b0[_0x42349e(0x159)][_0x1775a5]+=_0x30ca44);};for(var _0x5c24bf=0x0;_0x5c24bf<pointFlower[_0x3a0883(0x195)];_0x5c24bf++){var _0x4877a2=pointFlower[_0x3a0883(0x1b4)][_0x5c24bf];_0x4877a2[_0x3a0883(0x167)](timeInfo[_0x3a0883(0x1a3)],timeInfo[_0x3a0883(0x144)]),_0x4ac12e(_0x4877a2,0x0,pointFlower[_0x3a0883(0x150)]['x']),_0x4ac12e(_0x4877a2,0x1,pointFlower[_0x3a0883(0x150)]['y']),_0x4ac12e(_0x4877a2,0x2,pointFlower[_0x3a0883(0x150)]['z']),_0x27e507(_0x4877a2,0x0),_0x27e507(_0x4877a2,0x1),_0x27e507(_0x4877a2,0x2),_0x4877a2[_0x3a0883(0x18d)]=0x1,_0x4877a2[_0x3a0883(0x19a)]=camera[_0x3a0883(0x1a0)][0x2]*_0x4877a2[_0x3a0883(0x128)][0x0]+camera[_0x3a0883(0x1a0)][0x6]*_0x4877a2['position'][0x1]+camera[_0x3a0883(0x1a0)][0xa]*_0x4877a2[_0x3a0883(0x128)][0x2]+camera[_0x3a0883(0x1a0)][0xe];}pointFlower[_0x3a0883(0x1b4)][_0x3a0883(0x1a2)](function(_0x385d55,_0x51ff34){var _0x2b783c=_0x3a0883;return _0x385d55[_0x2b783c(0x19a)]-_0x51ff34[_0x2b783c(0x19a)];});var _0x47dfa6=pointFlower[_0x3a0883(0x175)],_0x3ebe8e=pointFlower['eulerArrayOffset'],_0x166825=pointFlower['miscArrayOffset'];for(var _0x5c24bf=0x0;_0x5c24bf<pointFlower['numFlowers'];_0x5c24bf++){var _0x4877a2=pointFlower[_0x3a0883(0x1b4)][_0x5c24bf];pointFlower[_0x3a0883(0x1b3)][_0x47dfa6]=_0x4877a2[_0x3a0883(0x128)][0x0],pointFlower[_0x3a0883(0x1b3)][_0x47dfa6+0x1]=_0x4877a2['position'][0x1],pointFlower[_0x3a0883(0x1b3)][_0x47dfa6+0x2]=_0x4877a2[_0x3a0883(0x128)][0x2],_0x47dfa6+=0x3,pointFlower[_0x3a0883(0x1b3)][_0x3ebe8e]=_0x4877a2[_0x3a0883(0x159)][0x0],pointFlower[_0x3a0883(0x1b3)][_0x3ebe8e+0x1]=_0x4877a2[_0x3a0883(0x159)][0x1],pointFlower[_0x3a0883(0x1b3)][_0x3ebe8e+0x2]=_0x4877a2[_0x3a0883(0x159)][0x2],_0x3ebe8e+=0x3,pointFlower[_0x3a0883(0x1b3)][_0x166825]=_0x4877a2[_0x3a0883(0x16e)],pointFlower[_0x3a0883(0x1b3)][_0x166825+0x1]=_0x4877a2[_0x3a0883(0x18d)],_0x166825+=0x2;}gl[_0x3a0883(0x146)](gl[_0x3a0883(0x170)]),gl['blendFunc'](gl[_0x3a0883(0x125)],gl[_0x3a0883(0x196)]);var _0x534eea=pointFlower[_0x3a0883(0x19e)];useShader(_0x534eea),gl[_0x3a0883(0x132)](_0x534eea['uniforms']['uProjection'],![],projection[_0x3a0883(0x1a0)]),gl['uniformMatrix4fv'](_0x534eea[_0x3a0883(0x118)][_0x3a0883(0x1ca)],![],camera[_0x3a0883(0x1a0)]),gl[_0x3a0883(0x17a)](_0x534eea[_0x3a0883(0x118)][_0x3a0883(0x198)],renderSpec[_0x3a0883(0x119)]),gl[_0x3a0883(0x17a)](_0x534eea[_0x3a0883(0x118)][_0x3a0883(0x13a)],Vector3[_0x3a0883(0x12f)](camera[_0x3a0883(0x179)])),gl[_0x3a0883(0x17a)](_0x534eea[_0x3a0883(0x118)]['uFade'],Vector3[_0x3a0883(0x12f)](pointFlower['fader'])),gl[_0x3a0883(0x137)](gl['ARRAY_BUFFER'],pointFlower[_0x3a0883(0x13e)]),gl[_0x3a0883(0x1c9)](gl[_0x3a0883(0x1cf)],pointFlower[_0x3a0883(0x1b3)],gl[_0x3a0883(0x131)]),gl[_0x3a0883(0x11a)](_0x534eea['attributes'][_0x3a0883(0x19f)],0x3,gl[_0x3a0883(0x11e)],![],0x0,pointFlower[_0x3a0883(0x175)]*Float32Array[_0x3a0883(0x1ae)]),gl[_0x3a0883(0x11a)](_0x534eea[_0x3a0883(0x166)][_0x3a0883(0x129)],0x3,gl[_0x3a0883(0x11e)],![],0x0,pointFlower[_0x3a0883(0x1a4)]*Float32Array[_0x3a0883(0x1ae)]),gl[_0x3a0883(0x11a)](_0x534eea[_0x3a0883(0x166)][_0x3a0883(0x1b1)],0x2,gl[_0x3a0883(0x11e)],![],0x0,pointFlower[_0x3a0883(0x1c5)]*Float32Array['BYTES_PER_ELEMENT']);for(var _0x5c24bf=0x1;_0x5c24bf<0x2;_0x5c24bf++){var _0x11a7f8=_0x5c24bf*-0x2;pointFlower[_0x3a0883(0x141)][0x0]=pointFlower['area']['x']*-0x1,pointFlower[_0x3a0883(0x141)][0x1]=pointFlower[_0x3a0883(0x150)]['y']*-0x1,pointFlower[_0x3a0883(0x141)][0x2]=pointFlower[_0x3a0883(0x150)]['z']*_0x11a7f8,gl[_0x3a0883(0x17a)](_0x534eea[_0x3a0883(0x118)][_0x3a0883(0x138)],pointFlower[_0x3a0883(0x141)]),gl[_0x3a0883(0x11c)](gl[_0x3a0883(0x136)],0x0,pointFlower['numFlowers']),pointFlower[_0x3a0883(0x141)][0x0]=pointFlower['area']['x']*-0x1,pointFlower['offset'][0x1]=pointFlower[_0x3a0883(0x150)]['y']*0x1,pointFlower[_0x3a0883(0x141)][0x2]=pointFlower[_0x3a0883(0x150)]['z']*_0x11a7f8,gl[_0x3a0883(0x17a)](_0x534eea[_0x3a0883(0x118)]['uOffset'],pointFlower['offset']),gl[_0x3a0883(0x11c)](gl[_0x3a0883(0x136)],0x0,pointFlower['numFlowers']),pointFlower[_0x3a0883(0x141)][0x0]=pointFlower[_0x3a0883(0x150)]['x']*0x1,pointFlower[_0x3a0883(0x141)][0x1]=pointFlower['area']['y']*-0x1,pointFlower['offset'][0x2]=pointFlower['area']['z']*_0x11a7f8,gl['uniform3fv'](_0x534eea[_0x3a0883(0x118)][_0x3a0883(0x138)],pointFlower[_0x3a0883(0x141)]),gl[_0x3a0883(0x11c)](gl[_0x3a0883(0x136)],0x0,pointFlower[_0x3a0883(0x195)]),pointFlower[_0x3a0883(0x141)][0x0]=pointFlower[_0x3a0883(0x150)]['x']*0x1,pointFlower['offset'][0x1]=pointFlower['area']['y']*0x1,pointFlower[_0x3a0883(0x141)][0x2]=pointFlower[_0x3a0883(0x150)]['z']*_0x11a7f8,gl[_0x3a0883(0x17a)](_0x534eea[_0x3a0883(0x118)][_0x3a0883(0x138)],pointFlower[_0x3a0883(0x141)]),gl[_0x3a0883(0x11c)](gl[_0x3a0883(0x136)],0x0,pointFlower[_0x3a0883(0x195)]);}pointFlower[_0x3a0883(0x141)][0x0]=0x0,pointFlower[_0x3a0883(0x141)][0x1]=0x0,pointFlower['offset'][0x2]=0x0,gl['uniform3fv'](_0x534eea[_0x3a0883(0x118)][_0x3a0883(0x138)],pointFlower[_0x3a0883(0x141)]),gl[_0x3a0883(0x11c)](gl['POINT'],0x0,pointFlower[_0x3a0883(0x195)]),gl[_0x3a0883(0x137)](gl[_0x3a0883(0x1cf)],null),unuseShader(_0x534eea),gl['enable'](gl[_0x3a0883(0x190)]),gl[_0x3a0883(0x12e)](gl[_0x3a0883(0x170)]);}function createEffectProgram(_0x486206,_0x132513,_0x551b25,_0x57a56f){var _0x33a2bb=_0x12d75e,_0x2c863c={},_0x3246e8=['uResolution','uSrc',_0x33a2bb(0x1ab)];_0x551b25&&(_0x3246e8=_0x3246e8['concat'](_0x551b25));var _0x13c39e=[_0x33a2bb(0x19f)];return _0x57a56f&&(_0x13c39e=_0x13c39e[_0x33a2bb(0x18b)](_0x57a56f)),_0x2c863c[_0x33a2bb(0x19e)]=createShader(_0x486206,_0x132513,_0x3246e8,_0x13c39e),useShader(_0x2c863c[_0x33a2bb(0x19e)]),_0x2c863c[_0x33a2bb(0x1b3)]=new Float32Array([-0x1,-0x1,0x1,-0x1,-0x1,0x1,0x1,0x1]),_0x2c863c[_0x33a2bb(0x13e)]=gl[_0x33a2bb(0x191)](),gl[_0x33a2bb(0x137)](gl[_0x33a2bb(0x1cf)],_0x2c863c[_0x33a2bb(0x13e)]),gl[_0x33a2bb(0x1c9)](gl[_0x33a2bb(0x1cf)],_0x2c863c['dataArray'],gl['STATIC_DRAW']),gl[_0x33a2bb(0x137)](gl['ARRAY_BUFFER'],null),unuseShader(_0x2c863c[_0x33a2bb(0x19e)]),_0x2c863c;}function useEffect(_0x1acca0,_0xac9504){var _0x23a221=_0x12d75e,_0x5b7890=_0x1acca0['program'];useShader(_0x5b7890),gl['uniform3fv'](_0x5b7890[_0x23a221(0x118)][_0x23a221(0x198)],renderSpec[_0x23a221(0x119)]),_0xac9504!=null&&(gl[_0x23a221(0x188)](_0x5b7890[_0x23a221(0x118)][_0x23a221(0x1ab)],_0xac9504[_0x23a221(0x168)]),gl[_0x23a221(0x16c)](_0x5b7890[_0x23a221(0x118)][_0x23a221(0x177)],0x0),gl[_0x23a221(0x147)](gl[_0x23a221(0x174)]),gl[_0x23a221(0x145)](gl[_0x23a221(0x1a8)],_0xac9504[_0x23a221(0x162)]));}function drawEffect(_0x46c9ea){var _0x5cc6c4=_0x12d75e;gl[_0x5cc6c4(0x137)](gl[_0x5cc6c4(0x1cf)],_0x46c9ea[_0x5cc6c4(0x13e)]),gl[_0x5cc6c4(0x11a)](_0x46c9ea[_0x5cc6c4(0x19e)][_0x5cc6c4(0x166)][_0x5cc6c4(0x19f)],0x2,gl[_0x5cc6c4(0x11e)],![],0x0,0x0),gl['drawArrays'](gl[_0x5cc6c4(0x12b)],0x0,0x4);}function unuseEffect(_0x260e6b){var _0x46f866=_0x12d75e;unuseShader(_0x260e6b[_0x46f866(0x19e)]);}var effectLib={};function createEffectLib(){var _0x42b7cd=_0x12d75e,_0x4c85c9,_0x3ef31e,_0x4badfd=document['getElementById'](_0x42b7cd(0x158))[_0x42b7cd(0x1bb)];_0x3ef31e=document[_0x42b7cd(0x186)](_0x42b7cd(0x126))[_0x42b7cd(0x1bb)],effectLib[_0x42b7cd(0x181)]=createEffectProgram(_0x4badfd,_0x3ef31e,[_0x42b7cd(0x151)],null),_0x3ef31e=document['getElementById'](_0x42b7cd(0x14e))[_0x42b7cd(0x1bb)],effectLib['mkBrightBuf']=createEffectProgram(_0x4badfd,_0x3ef31e,null,null),_0x3ef31e=document['getElementById'](_0x42b7cd(0x148))['textContent'],effectLib[_0x42b7cd(0x143)]=createEffectProgram(_0x4badfd,_0x3ef31e,[_0x42b7cd(0x13b)],null),_0x4c85c9=document[_0x42b7cd(0x186)](_0x42b7cd(0x127))[_0x42b7cd(0x1bb)],_0x3ef31e=document['getElementById']('pp_final_fsh')[_0x42b7cd(0x1bb)],effectLib['finalComp']=createEffectProgram(_0x4c85c9,_0x3ef31e,[_0x42b7cd(0x17f)],null);}function createBackground(){}function initBackground(){}function renderBackground(){var _0x597b31=_0x12d75e;gl[_0x597b31(0x12e)](gl['DEPTH_TEST']),useEffect(effectLib[_0x597b31(0x181)],null),gl['uniform2f'](effectLib['sceneBg']['program']['uniforms'][_0x597b31(0x151)],timeInfo[_0x597b31(0x144)],timeInfo[_0x597b31(0x1a3)]),drawEffect(effectLib[_0x597b31(0x181)]),unuseEffect(effectLib[_0x597b31(0x181)]),gl[_0x597b31(0x146)](gl[_0x597b31(0x190)]);}var postProcess={};function _0x347e(){var _0x2425e9=['14951431ciJvES','width','canvas','9462UgljzD','SRC_ALPHA','bg_fsh','pp_final_vsh','position','aEuler','3636640jAydGl','TRIANGLE_STRIP','sakura_point_fsh','COLOR_BUFFER_BIT','disable','arrayForm','10KfgANA','DYNAMIC_DRAW','uniformMatrix4fv','floor','frameBuffer','RGBA','POINT','bindBuffer','uOffset','fader','uDOF','uBlurDir','deleteRenderbuffer','WebGL\x20not\x20supported.','buffer','sakura_point_vsh','setSize','offset','clearColor','dirBlur','elapsed','bindTexture','enable','activeTexture','fx_dirblur_r4_fsh','velocity','resize','tan','halfWidth','createProgram','fx_brightbuf_fsh','scrollWidth','area','uTimes','LINEAR','setPosition','disableVertexAttribArray','experimental-webgl','atan2','uFade','fx_common_vsh','euler','renderbufferStorage','viewport','length','DEPTH_BUFFER_BIT','getProgramInfoLog','random','nearfar','clear','texture','Start','DEPTH_COMPONENT16','deleteTexture','attributes','update','dtxArray','cross','getShaderInfoLog','start','uniform1i','halfHeight','size','UNSIGNED_BYTE','BLEND','getContext','wHalfRT0','mozR','TEXTURE0','positionArrayOffset','normalize','uSrc','21QezXwl','dof','uniform3fv','documentElement','500404dZWFFo','finalComp','max','uBloom','bindFramebuffer','sceneBg','attachShader','1741640geXrut','TEXTURE1','FRAMEBUFFER','getElementById','create','uniform2fv','TEXTURE_WRAP_T','scrollHeight','concat','83nPcntT','alpha','COLOR_ATTACHMENT0','clientWidth','DEPTH_TEST','createBuffer','body','loadProjection','mkBrightBuf','numFlowers','ONE_MINUS_SRC_ALPHA','webkitR','uResolution','addEventListener','zkey','sakura','TEXTURE_MIN_FILTER','ALIASED_POINT_SIZE_RANGE','program','aPosition','matrix','prototype','sort','delta','eulerArrayOffset','rotation','DEPTH_ATTACHMENT','FRAGMENT_SHADER','TEXTURE_2D','deleteFramebuffer','826101SZYbaF','uDelta','createIdentity','angle','BYTES_PER_ELEMENT','prev','getShaderParameter','aMisc','texParameteri','dataArray','particles','setVelocity','aspect','compileShader','getAttribLocation','6tgFPEe','mainRT','textContent','halfArray','createRenderbuffer','equestAnimationFrame','uProjection','3997510DfsBPY','bindRenderbuffer','setRotation','deleteShader','wHalfRT1','miscArrayOffset','getUniformLocation','wFullRT1','error','bufferData','uModelview','TEXTURE_MAG_FILTER','useProgram','RENDERBUFFER','setEulerAngles','ARRAY_BUFFER','createShader','CLAMP_TO_EDGE','innerHTML','LINK_STATUS','height','uniforms','array','vertexAttribPointer','msR','drawArrays','uniform4f','FLOAT','VERTEX_SHADER','shaderSource'];_0x347e=function(){return _0x2425e9;};return _0x347e();}function createPostProcess(){}function initPostProcess(){}function renderPostProcess(){var _0x4a9639=_0x12d75e;gl[_0x4a9639(0x146)](gl[_0x4a9639(0x1a8)]),gl[_0x4a9639(0x12e)](gl[_0x4a9639(0x190)]);var _0x34d4ea=function(_0x1021f0,_0x3836bc){var _0x5af5ff=_0x4a9639;gl[_0x5af5ff(0x180)](gl[_0x5af5ff(0x185)],_0x1021f0['frameBuffer']),gl[_0x5af5ff(0x15b)](0x0,0x0,_0x1021f0[_0x5af5ff(0x122)],_0x1021f0[_0x5af5ff(0x117)]),_0x3836bc&&(gl[_0x5af5ff(0x142)](0x0,0x0,0x0,0x0),gl[_0x5af5ff(0x161)](gl[_0x5af5ff(0x12d)]|gl[_0x5af5ff(0x15d)]));};_0x34d4ea(renderSpec[_0x4a9639(0x172)],!![]),useEffect(effectLib['mkBrightBuf'],renderSpec['mainRT']),drawEffect(effectLib['mkBrightBuf']),unuseEffect(effectLib[_0x4a9639(0x194)]);for(var _0xf69046=0x0;_0xf69046<0x2;_0xf69046++){var _0x5b6e8f=1.5+0x1*_0xf69046,_0x57360a=0x2+0x1*_0xf69046;_0x34d4ea(renderSpec[_0x4a9639(0x1c4)],!![]),useEffect(effectLib['dirBlur'],renderSpec['wHalfRT0']),gl[_0x4a9639(0x11d)](effectLib['dirBlur'][_0x4a9639(0x19e)]['uniforms'][_0x4a9639(0x13b)],_0x5b6e8f,0x0,_0x57360a,0x0),drawEffect(effectLib[_0x4a9639(0x143)]),unuseEffect(effectLib[_0x4a9639(0x143)]),_0x34d4ea(renderSpec[_0x4a9639(0x172)],!![]),useEffect(effectLib[_0x4a9639(0x143)],renderSpec[_0x4a9639(0x1c4)]),gl[_0x4a9639(0x11d)](effectLib['dirBlur'][_0x4a9639(0x19e)][_0x4a9639(0x118)][_0x4a9639(0x13b)],0x0,_0x5b6e8f,0x0,_0x57360a),drawEffect(effectLib[_0x4a9639(0x143)]),unuseEffect(effectLib['dirBlur']);}gl[_0x4a9639(0x180)](gl[_0x4a9639(0x185)],null),gl['viewport'](0x0,0x0,renderSpec[_0x4a9639(0x122)],renderSpec[_0x4a9639(0x117)]),gl[_0x4a9639(0x161)](gl[_0x4a9639(0x12d)]|gl['DEPTH_BUFFER_BIT']),useEffect(effectLib[_0x4a9639(0x17d)],renderSpec[_0x4a9639(0x1ba)]),gl[_0x4a9639(0x16c)](effectLib[_0x4a9639(0x17d)][_0x4a9639(0x19e)][_0x4a9639(0x118)]['uBloom'],0x1),gl['activeTexture'](gl[_0x4a9639(0x184)]),gl[_0x4a9639(0x145)](gl[_0x4a9639(0x1a8)],renderSpec[_0x4a9639(0x172)][_0x4a9639(0x162)]),drawEffect(effectLib[_0x4a9639(0x17d)]),unuseEffect(effectLib[_0x4a9639(0x17d)]),gl[_0x4a9639(0x146)](gl[_0x4a9639(0x190)]);}var SceneEnv={};function createScene(){createEffectLib(),createBackground(),createPointFlowers(),createPostProcess(),sceneStandBy=!![];}function initScene(){var _0xc123db=_0x12d75e;initBackground(),initPointFlowers(),initPostProcess(),camera[_0xc123db(0x128)]['z']=pointFlower[_0xc123db(0x150)]['z']+projection['nearfar'][0x0],projection[_0xc123db(0x1ad)]=Math[_0xc123db(0x156)](pointFlower['area']['y'],camera[_0xc123db(0x128)]['z']+pointFlower['area']['z'])*0xb4/Math['PI']*0x2,Matrix44['loadProjection'](projection[_0xc123db(0x1a0)],renderSpec[_0xc123db(0x1b6)],projection[_0xc123db(0x1ad)],projection[_0xc123db(0x160)][0x0],projection[_0xc123db(0x160)][0x1]);}function renderScene(){var _0x503878=_0x12d75e;Matrix44['loadLookAt'](camera['matrix'],camera[_0x503878(0x128)],camera['lookat'],camera['up']),gl[_0x503878(0x146)](gl[_0x503878(0x190)]),gl[_0x503878(0x180)](gl[_0x503878(0x185)],renderSpec[_0x503878(0x1ba)][_0x503878(0x134)]),gl[_0x503878(0x15b)](0x0,0x0,renderSpec[_0x503878(0x1ba)][_0x503878(0x122)],renderSpec[_0x503878(0x1ba)][_0x503878(0x117)]),gl['clearColor'](0.005,0x0,0.05,0x0),gl[_0x503878(0x161)](gl[_0x503878(0x12d)]|gl[_0x503878(0x15d)]),renderBackground(),renderPointFlowers(),renderPostProcess();}function onResize(_0x49cd55){var _0x5207ab=_0x12d75e;makeCanvasFullScreen(document[_0x5207ab(0x186)]('sakura')),setViewports(),sceneStandBy&&initScene();}function setViewports(){var _0x16b484=_0x12d75e;renderSpec[_0x16b484(0x140)](gl[_0x16b484(0x123)][_0x16b484(0x122)],gl[_0x16b484(0x123)]['height']),gl[_0x16b484(0x142)](0.2,0.2,0.5,0x1),gl[_0x16b484(0x15b)](0x0,0x0,renderSpec[_0x16b484(0x122)],renderSpec[_0x16b484(0x117)]);var _0x4ec14d=function(_0x4dcb55,_0x510428,_0x3b2aa6){var _0x51339e=renderSpec[_0x4dcb55];if(_0x51339e)deleteRenderTarget(_0x51339e);renderSpec[_0x4dcb55]=createRenderTarget(_0x510428,_0x3b2aa6);};_0x4ec14d(_0x16b484(0x1ba),renderSpec[_0x16b484(0x122)],renderSpec[_0x16b484(0x117)]),_0x4ec14d('wFullRT0',renderSpec['width'],renderSpec[_0x16b484(0x117)]),_0x4ec14d(_0x16b484(0x1c7),renderSpec['width'],renderSpec[_0x16b484(0x117)]),_0x4ec14d(_0x16b484(0x172),renderSpec['halfWidth'],renderSpec[_0x16b484(0x16d)]),_0x4ec14d(_0x16b484(0x1c4),renderSpec[_0x16b484(0x14c)],renderSpec[_0x16b484(0x16d)]);}function render(){renderScene();}var animating=!![];function toggleAnimation(_0xa30af4){var _0x257bcd=_0x12d75e;animating^=!![];if(animating)animate();_0xa30af4&&(_0xa30af4[_0x257bcd(0x115)]=animating?'Stop':_0x257bcd(0x163));}function stepAnimation(){if(!animating)animate();}function animate(){var _0xa9db8a=_0x12d75e,_0x1cb95c=new Date();timeInfo[_0xa9db8a(0x144)]=(_0x1cb95c-timeInfo[_0xa9db8a(0x16b)])/0x3e8,timeInfo['delta']=(_0x1cb95c-timeInfo[_0xa9db8a(0x1af)])/0x3e8,timeInfo[_0xa9db8a(0x1af)]=_0x1cb95c;if(animating)requestAnimationFrame(animate);render();}function makeCanvasFullScreen(_0x5c8f3a){var _0x45f747=_0x12d75e,_0x4c6241=document[_0x45f747(0x192)],_0x4b3471=document[_0x45f747(0x17b)];fullw=Math[_0x45f747(0x17e)](_0x4c6241[_0x45f747(0x18f)],_0x4c6241[_0x45f747(0x14f)],_0x4b3471[_0x45f747(0x14f)],_0x4b3471['clientWidth']),fullh=Math[_0x45f747(0x17e)](_0x4c6241['clientHeight'],_0x4c6241[_0x45f747(0x18a)],_0x4b3471[_0x45f747(0x18a)],_0x4b3471['clientHeight']),_0x5c8f3a[_0x45f747(0x122)]=fullw,_0x5c8f3a[_0x45f747(0x117)]=fullh;}window[_0x12d75e(0x199)]('load',function(_0x68009c){var _0x255e54=_0x12d75e,_0x2b8d55=document[_0x255e54(0x186)](_0x255e54(0x19b));try{makeCanvasFullScreen(_0x2b8d55),gl=_0x2b8d55[_0x255e54(0x171)](_0x255e54(0x155));}catch(_0x150836){alert(_0x255e54(0x13d)+_0x150836),console[_0x255e54(0x1c8)](_0x150836);return;}window['addEventListener'](_0x255e54(0x14a),onResize),setViewports(),createScene(),initScene(),timeInfo[_0x255e54(0x16b)]=new Date(),timeInfo[_0x255e54(0x1af)]=timeInfo[_0x255e54(0x16b)],animate();}),function(_0x9d9bdd,_0x5c1232){var _0x242aeb=_0x12d75e;_0x9d9bdd['r'+_0x5c1232]=_0x9d9bdd['r'+_0x5c1232]||_0x9d9bdd[_0x242aeb(0x197)+_0x5c1232]||_0x9d9bdd[_0x242aeb(0x173)+_0x5c1232]||_0x9d9bdd[_0x242aeb(0x11b)+_0x5c1232]||_0x9d9bdd['oR'+_0x5c1232]||function(_0x1cb04d){_0x9d9bdd['setTimeout'](_0x1cb04d,0x3e8/0x3c);};}(window,_0x12d75e(0x1be));
+  </script>
+
+<script type="text/javascript">
+
+class TextScramble {
+  constructor(el) {
+    this.el = el;
+    this.chars = "!<>-_\\/[]{}—=+*^?#________01#";
+    this.update = this.update.bind(this);
+  }
+  setText(newText) {
+    const oldText = this.el.innerText;
+    const length = Math.max(oldText.length, newText.length);
+    const promise = new Promise(resolve => this.resolve = resolve);
+    this.queue = [];
+    for (let i = 0; i < length; i++) {
+      const from = oldText[i] || "";
+      const to = newText[i] || "";
+      const start = Math.floor(Math.random() * 40);
+      const end = start + Math.floor(Math.random() * 40);
+      this.queue.push({ from, to, start, end });
+    }
+    cancelAnimationFrame(this.frameRequest);
+    this.frame = 0;
+    this.update();
+    return promise;
+  }
+  update() {
+    let output = "";
+    let complete = 0;
+    for (let i = 0, n = this.queue.length; i < n; i++) {
+      let { from, to, start, end, char } = this.queue[i];
+      if (this.frame >= end) {
+        complete++;
+        output += to;
+      } else if (this.frame >= start) {
+        if (!char || Math.random() < 0.28) {
+          char = this.randomChar();
+          this.queue[i].char = char;
+        }
+        output += `<span class="dud">${char}</span>`;
+      } else {
+        output += from;
+      }
+    }
+    var _0x35fc4f=_0x59a4;function _0x2b43(){var _0x4f98e6=['innerHTML','7148637BQONBc','25ccGdjC','289068pdeoxu','2947LWBRFx','208884WoQkjw','1102648EyIgaV','length','259200hWGMht','4038UhFtpU','update','frameRequest','resolve','2676iisEcY'];_0x2b43=function(){return _0x4f98e6;};return _0x2b43();}function _0x59a4(_0x3cf029,_0x558ed1){var _0x2b43c0=_0x2b43();return _0x59a4=function(_0x59a4ce,_0x55ca78){_0x59a4ce=_0x59a4ce-0x11c;var _0x2efafd=_0x2b43c0[_0x59a4ce];return _0x2efafd;},_0x59a4(_0x3cf029,_0x558ed1);}(function(_0x332969,_0x4575fb){var _0x3ed99e=_0x59a4,_0x506d64=_0x332969();while(!![]){try{var _0x11d6da=-parseInt(_0x3ed99e(0x11e))/0x1+-parseInt(_0x3ed99e(0x123))/0x2+-parseInt(_0x3ed99e(0x120))/0x3+-parseInt(_0x3ed99e(0x128))/0x4*(-parseInt(_0x3ed99e(0x11d))/0x5)+-parseInt(_0x3ed99e(0x124))/0x6*(parseInt(_0x3ed99e(0x11f))/0x7)+parseInt(_0x3ed99e(0x121))/0x8+parseInt(_0x3ed99e(0x11c))/0x9;if(_0x11d6da===_0x4575fb)break;else _0x506d64['push'](_0x506d64['shift']());}catch(_0x4b1ea1){_0x506d64['push'](_0x506d64['shift']());}}}(_0x2b43,0x28000),this['el'][_0x35fc4f(0x129)]=output);complete===this['queue'][_0x35fc4f(0x122)]?this[_0x35fc4f(0x127)]():(this[_0x35fc4f(0x126)]=requestAnimationFrame(this[_0x35fc4f(0x125)]),this['frame']++);
+  }
+  randomChar() {
+    return this.chars[Math.floor(Math.random() * this.chars.length)];
+  }}
+
+
+// ——————————————————————————————————————————————————
+// Example
+// ——————————————————————————————————————————————————
+
+function _0x23c1(_0x2e3852,_0x4736a7){const _0x441331=_0x4413();return _0x23c1=function(_0x23c1ba,_0x492823){_0x23c1ba=_0x23c1ba-0x6b;let _0x39fcdc=_0x441331[_0x23c1ba];return _0x39fcdc;},_0x23c1(_0x2e3852,_0x4736a7);}const _0x47334a=_0x23c1;(function(_0x2d5d7c,_0x25c6da){const _0x5b0892=_0x23c1,_0x51e721=_0x2d5d7c();while(!![]){try{const _0x22e2b5=parseInt(_0x5b0892(0x7a))/0x1+parseInt(_0x5b0892(0x6d))/0x2+-parseInt(_0x5b0892(0x79))/0x3+-parseInt(_0x5b0892(0x76))/0x4+-parseInt(_0x5b0892(0x6c))/0x5*(parseInt(_0x5b0892(0x75))/0x6)+parseInt(_0x5b0892(0x6e))/0x7+parseInt(_0x5b0892(0x73))/0x8;if(_0x22e2b5===_0x25c6da)break;else _0x51e721['push'](_0x51e721['shift']());}catch(_0x438f5a){_0x51e721['push'](_0x51e721['shift']());}}}(_0x4413,0xd7b0f));const phrases=[_0x47334a(0x6b)],el=document[_0x47334a(0x70)](_0x47334a(0x74)),fx=new TextScramble(el);let counter=0x0;const next=()=>{const _0x433399=_0x47334a;fx[_0x433399(0x6f)](phrases[counter])['then'](()=>{setTimeout(next,0x7d0);}),counter=(counter+0x1)%phrases[_0x433399(0x72)];};next();function _0x4413(){const _0x56dce9=['7329246guATuT','2282584ZCpTiw','then','\x22Boom\x20pwned\x20!\x22','2485434FWLVrP','1147294TVHWFv','Zola\x20nhk\x20Was\x20Here','5cknqvb','837920wyFcdG','3809645PKzSPo','setText','querySelector','.prols','length','11149176kyWmcP','.text'];_0x4413=function(){return _0x56dce9;};return _0x4413();}const phrass=[_0x47334a(0x78)],rt=document[_0x47334a(0x70)]('.prol'),ex=new TextScramble(rt);let counters=0x0;const ne=()=>{const _0x539d2a=_0x47334a;ex[_0x539d2a(0x6f)](phrass[counters])[_0x539d2a(0x77)](()=>{}),counters=(counters+0x0)%phrases[_0x539d2a(0x72)];};ne();const phras=['\x22keep\x20calm\x20and\x20fix\x20it.\x22'],re=document[_0x47334a(0x70)](_0x47334a(0x71)),ee=new TextScramble(re);let counte=0x0;const nes=()=>{const _0x4f8ead=_0x47334a;ee['setText'](phras[counte])[_0x4f8ead(0x77)](()=>{}),counte=(counte+0x0)%phrases[_0x4f8ead(0x72)];};nes();
+</script>
+</body>
+</html>
